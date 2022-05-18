@@ -2,14 +2,17 @@ import React, { FC, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../hooks";
 import {
     changeAllStatus,
-    changeStatus,
+    toggleItem,
     deleteTodo,
     deleteTodos,
+    fetchTodos,
 } from "../store/TodoSlice";
+import loadingGif from "../assets/loading.gif";
 import { Todo } from "./Todo";
 
 export const Todos: FC = () => {
     const todos = useAppSelector((state) => state.todos.todos);
+    const loading = useAppSelector((state) => state.todos.loading);
     const [isTodosSelected, setIsTodoSelected] = useState<boolean>(false);
     const dispatch = useAppDispatch();
     useEffect(() => {
@@ -19,13 +22,16 @@ export const Todos: FC = () => {
             })
         );
     }, [todos]);
+    useEffect(() => {
+        dispatch(fetchTodos());
+    }, [dispatch]);
     const todosList = todos?.map((todo, index) => {
         return (
             <Todo
                 key={todo.title}
                 title={todo.title}
                 completed={todo.completed}
-                changeStatus={() => dispatch(changeStatus(todo))}
+                changeStatus={() => dispatch(toggleItem(todo))}
                 deleteTodo={() => dispatch(deleteTodo(index))}
             />
         );
@@ -33,25 +39,31 @@ export const Todos: FC = () => {
     return (
         <div className="todos">
             <h3 className="todos__title">Tasks</h3>
-            <button
-                className="todos__select"
-                onClick={() => dispatch(changeAllStatus())}
-            >
-                Select all
-            </button>
-            {todos.length !== 0 ? (
-                <div className="todos__list">{todosList}</div>
+            {loading ? (
+                <img className="loading" src={loadingGif} alt="Loading..." />
             ) : (
-                <div>There is no tasks to do</div>
-            )}
+                <>
+                    <button
+                        className="todos__select"
+                        onClick={() => dispatch(changeAllStatus())}
+                    >
+                        Select all
+                    </button>
+                    {todos.length !== 0 ? (
+                        <div className="todos__list">{todosList}</div>
+                    ) : (
+                        <div>There is no tasks to do</div>
+                    )}
 
-            {isTodosSelected && (
-                <button
-                    className="todos__button"
-                    onClick={() => dispatch(deleteTodos())}
-                >
-                    Delete todos
-                </button>
+                    {isTodosSelected && (
+                        <button
+                            className="todos__button"
+                            onClick={() => dispatch(deleteTodos())}
+                        >
+                            Delete todos
+                        </button>
+                    )}
+                </>
             )}
         </div>
     );

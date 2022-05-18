@@ -10,10 +10,12 @@ type Todo = {
 
 type TodosState = {
     todos: Todo[];
+    loading: boolean;
 };
 
 const initialState: TodosState = {
     todos: [],
+    loading: false,
 };
 
 export const fetchTodos = createAsyncThunk("todos/fetchTodos", async () => {
@@ -30,7 +32,7 @@ const todoSlice = createSlice({
     name: "todos",
     initialState,
     reducers: {
-        changeStatus(state, action: PayloadAction<ITodos>) {
+        toggleItem(state, action: PayloadAction<ITodos>) {
             const updatedTodo = {
                 ...action.payload,
                 completed: !action.payload.completed,
@@ -62,8 +64,9 @@ const todoSlice = createSlice({
         },
         changeAllStatus(state) {
             const updatedTodos = state.todos.map((todo) => {
-                return { ...todo, completed: true };
+                return { ...todo, completed: !todo.completed };
             });
+
             state.todos = updatedTodos;
         },
         addNewTodo(state, action: PayloadAction<string>) {
@@ -76,14 +79,18 @@ const todoSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
+        builder.addCase(fetchTodos.pending, (state) => {
+            state.loading = true;
+        });
         builder.addCase(fetchTodos.fulfilled, (state, action) => {
             state.todos = action.payload;
+            state.loading = false;
         });
     },
 });
 
 export const {
-    changeStatus,
+    toggleItem,
     deleteTodos,
     changeAllStatus,
     addNewTodo,

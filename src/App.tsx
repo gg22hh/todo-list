@@ -1,16 +1,9 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "./App.css";
 import { NewTodoForm } from "./components/NewTodoForm";
 import { Todos } from "./components/Todos";
-import { useAppDispatch } from "./hooks";
-import { fetchTodos } from "./store/TodoSlice";
 
 function App() {
-    const dispatch = useAppDispatch();
-    useEffect(() => {
-        dispatch(fetchTodos());
-    }, [dispatch]);
-
     return (
         <div className="App">
             <div className="container">
