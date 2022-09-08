@@ -19,7 +19,9 @@ const initialState: TodosState = {
 };
 
 export const fetchTodos = createAsyncThunk("todos/fetchTodos", async () => {
-   const response = await fetch("http://localhost:3001/todos/");
+   const response = await fetch(
+      "https://todo-list-gg22hh.vercel.app/:3001/todos/"
+   );
    if (response.ok) {
       const json = await response.json();
       return json;

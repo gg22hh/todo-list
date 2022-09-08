@@ -15,13 +15,16 @@ export const NewTodoForm: FC = () => {
             completed: false,
          };
 
-         const response = await fetch("http://localhost:3001/todos", {
-            method: "POST",
-            headers: {
-               "Content-Type": "application/json",
-            },
-            body: JSON.stringify(newTodo),
-         });
+         const response = await fetch(
+            "https://todo-list-gg22hh.vercel.app/:3001/todos",
+            {
+               method: "POST",
+               headers: {
+                  "Content-Type": "application/json",
+               },
+               body: JSON.stringify(newTodo),
+            }
+         );
       }
       setNewTodoValue("");
    };
